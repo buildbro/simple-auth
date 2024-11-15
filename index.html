@@ -68,14 +68,8 @@ window.onload = async () => {
 
     const query = window.location.search;
     if (query.includes("code=")) {
-        const urlString = window.location.href;
-        const url = new URL(urlString);
-        const params = url.searchParams;
-        console.log(params.get("code"));
-
-        // await authgearClient.finishAuthentication();
+        await authgearClient.finishAuthentication();
         updateUI();
-        console.log("auth code sent!");
         window.history.replaceState({}, document.title, "/");
     }
 }
