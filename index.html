@@ -34,7 +34,7 @@ const configureClient = async () => {
 const login = async () => {
     await authgearClient
         .startAuthentication({
-            redirectURI: "http://localhost:3000",
+            redirectURI: "https://www.authgeartest.online/spa",
             prompt: "login",
         })
         .then(
