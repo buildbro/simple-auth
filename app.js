@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const { join } = require("path");
 require('dotenv').config();
 
 const app = express();
@@ -74,6 +75,10 @@ app.get("/login", (req, res) => {
     res.redirect(url);
   
   });
+
+app.get("/spa", (req, res) => {
+    res.sendFile(join(__dirname, "index.html"));
+});
 
   app.listen(port, () => {
     console.log(`server started on port ${port}`);
