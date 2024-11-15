@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Authgear SPA SDK Sample</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+  </head>
+
+  <body>
+    <h2>SPA Authentication Sample</h2>
+    <p>Welcome to our page!</p>
+    <button id="btn-login" disabled="true" onclick="login()">Log in</button>
+    <button id="btn-logout" disabled="true" onclick="logout()">Log out</button>
+    <script>
+      let authgearClient = null;
+
+const configureClient = async () => {
+    authgearClient = window.authgear.default;
+
+    await authgearClient.configure({
+        endpoint: "https://authui.authgeartest.online",
+        clientID: "5e0dd7c6c4ef430e",
+        sessionType: "refresh_token",
+    }).then(
+        () => {
+            console.log("Authgear client successfully configured!");
+        },
+        (err) => {
+            console.log("Failed to configure Authgear");
+        }
+    );
+};
+
+const login = async () => {
+    await authgearClient
+        .startAuthentication({
+            redirectURI: "http://localhost:3000",
+            prompt: "login",
+        })
+        .then(
+            () => {
+                console.log("Logged in!");
+            },
+            (err) => {
+                console.log("Log in failed", err);
+            }
+        );
+};
+
+const logout = () => {
+    authgearClient
+    .logout({
+      redirectURI: window.location.origin,
+    })
+    .then(
+      () => {
+        console.log("Logged out successfully");
+      },
+      (err) => {
+        console.log("Failed to logout");
+      }
+    );
+};
+
+window.onload = async () => {
+    await configureClient();
+    updateUI();
+
+    const query = window.location.search;
+    if (query.includes("code=")) {
+        const urlString = window.location.href;
+        const url = new URL(urlString);
+        const params = url.searchParams;
+        console.log(params.get("code"));
+
+        await authgearClient.finishAuthentication();
+        updateUI();
+        console.log("auth code sent!");
+        window.history.replaceState({}, document.title, "/");
+    }
+}
+
+const updateUI = async () => {
+    const isAuthenticated = authgearClient.sessionState === "AUTHENTICATED";
+
+    document.getElementById("btn-logout").disabled = !isAuthenticated;
+    document.getElementById("btn-login").disabled = isAuthenticated;
+};
+    </script>
+    <script src="https://unpkg.com/@authgear/web@2.2.0/dist/authgear-web.iife.js"></script>
+  </body>
+</html>
